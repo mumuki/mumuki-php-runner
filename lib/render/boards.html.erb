@@ -1,0 +1,58 @@
+<style>
+
+  .boards-container {
+    display: inline-flex;
+  }
+
+  .error-text {
+    color: #d9534f;
+  }
+
+  .boom-text {
+    margin-top: 20px;
+  }
+
+  .title {
+    color: #b4bcc2;
+    text-align: left;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 9pt;
+  }
+
+  .board {
+    margin: 0 15px;
+  }
+
+</style>
+
+<% if @result[:error] %>
+  <p class="error-text">
+    <%=I18n.t @result[:error], @result %>
+  </p>
+<% end %>
+
+<div class="boards-container">
+
+  <% @result[:boards].each do |it| %>
+    <div class="board">
+      <p class="title"><%=I18n.t it.title %></p>
+      <p>
+        <% if it.board.boom %>
+          <img src=<%= "#{Mumukit.runner_url}/assets/boom.png" %> />
+        <% else %>
+          <gs-board <%= @options[:check_head_position] ? "" : "without-header"  %>>
+            <%= it.board.gbb %>
+          </gs-board>
+        <% end %>
+      </p>
+    </div>
+  <% end %>
+
+</div>
+
+<% if @result[:reason] %>
+  <div class="boom-text">
+    <strong>BOOM</strong>
+    <pre><%=@result[:reason]%></pre>
+  </div>
+<% end %>
