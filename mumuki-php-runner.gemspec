@@ -18,11 +18,10 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'mumukit', '~> 2.21'
-  spec.add_dependency 'sinatra-cross_origin', '~> 0.4'
 
   spec.add_development_dependency 'bundler', '~> 1.7'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.4'
   spec.add_development_dependency 'codeclimate-test-reporter'
-  spec.add_development_dependency 'mumukit-bridge', '~> 3.0'
+  spec.add_development_dependency 'mumukit-bridge', '~> 3.5'
 end
