@@ -3,7 +3,7 @@ class PhpTestHook < PhpFileHook
 
   TEST_NAME = 'AAAMumukiTestCaseAAA'
   PASSED_REGEXP = /[✔☢] ([^\n]+)/
-  FAILED_REGEXP = /([^\n]+)\n *\│\n *│ ([^イ]+│ \n   )/
+  FAILED_REGEXP = /✘ ([^\n]+)\n *\│\n *│ ([^イ]+│ \n   )/
 
   def command_line(filename)
     "phpunit --testdox #{filename}"

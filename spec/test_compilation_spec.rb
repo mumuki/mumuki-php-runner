@@ -9,7 +9,7 @@ describe PhpTestHook do
   let(:sample_test) {
     <<PHP
 public function testFooBarBaz(): void {
-  $this->assertEquals(new Foo().bar(), "baz");
+  $this->assertEquals("baz", new Foo().bar());
 }
 PHP
   }
@@ -25,7 +25,7 @@ use PHPUnit\\Framework\\TestCase;
 
 final class AAAMumukiTestCaseAAATest extends TestCase {
   public function testFooBarBaz(): void {
-    $this->assertEquals(new Foo().bar(), "baz");
+    $this->assertEquals("baz", new Foo().bar());
   }
 
 }
