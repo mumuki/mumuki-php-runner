@@ -27,8 +27,8 @@ class PhpTestHook < PhpFileHook
 <?php
 declare(strict_types=1);
 
-#{req.content}
 #{req.extra}
+#{req.content}
 
 use PHPUnit\\Framework\\TestCase;
 

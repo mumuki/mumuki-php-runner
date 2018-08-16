@@ -6,8 +6,8 @@ class PhpQueryHook < PhpFileHook
   def compile_file_content(req)
     <<EOF
 <?php
-#{req.content}
 #{req.extra}
+#{req.content}
 
 echo #{req.query};
 EOF
