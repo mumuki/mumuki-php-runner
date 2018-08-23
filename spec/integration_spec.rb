@@ -102,6 +102,72 @@ RESULT
                            status: :errored,
                            feedback: '',
                            expectation_results: [],
-                           result: "PHP Parse error:  syntax error, unexpected '[', expecting function (T_FUNCTION) or const (T_CONST) in solution.php on line 5\n")
+                           result: "Parse error: syntax error, unexpected '[', expecting function (T_FUNCTION) or const (T_CONST) in solution.php on line 5")
+  end
+
+  it 'supports testing SQLite with PDO' do
+    response = bridge.run_tests!(test: (<<TEST
+public function testDbHasTheRightData(): void {
+  global $memory_db;
+
+  // Retrieve one row from messages table
+  $query = $memory_db->prepare('SELECT * FROM messages LIMIT 1');
+  $query->execute();
+  $data = $query->fetch();
+
+  // Check the results
+  $this->assertEquals("Hello!", $data['title']);
+  $this->assertEquals("Just testing...", $data['message']);
+}
+TEST
+                                 ),
+                                 extra: (<<EXTRA
+// Create new database in memory
+$memory_db = new PDO('sqlite::memory:');
+
+// Set error mode to exceptions
+$memory_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+// Create a messages table
+$memory_db->exec("CREATE TABLE messages (
+                  id INTEGER PRIMARY KEY, 
+                  title TEXT, 
+                  message TEXT)");
+EXTRA
+                                 ),
+                                 content: (<<CONTENT
+// Array with some data to insert to database             
+$messages = array(
+              array('title' => 'Hello!', 'message' => 'Just testing...'),
+              array('title' => 'Hello again!', 'message' => 'More testing...'),
+              array('title' => 'Hi!', 'message' => 'SQLite3 is cool...')
+            );
+
+// Prepare INSERT statement to SQLite3
+$insert = "INSERT INTO messages (id, title, message) VALUES (:id, :title, :message)";
+$stmt = $memory_db->prepare($insert);
+
+// Bind parameters to statement variables
+$stmt->bindParam(':title', $title);
+$stmt->bindParam(':message', $message);
+
+// Loop thru all messages and execute prepared insert statement
+foreach ($messages as $m) {
+  // Set values to bound variables
+  $title = $m['title'];
+  $message = $m['message'];
+
+  // Execute statement
+  $stmt->execute();
+}
+CONTENT
+                                 ))
+
+    expect(response).to eq(response_type: :structured,
+                           test_results: [{title: 'Db has the right data', status: :passed, result: ''}],
+                           status: :passed,
+                           feedback: '',
+                           expectation_results: [],
+                           result: '')
   end
 end

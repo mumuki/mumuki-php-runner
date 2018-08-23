@@ -10,7 +10,7 @@ class PhpTestHook < PhpFileHook
   end
 
   def post_process_file(file, result, status)
-    return [result, :errored] unless result.include? TEST_NAME
+    return [result.strip, :errored] unless result.include? TEST_NAME
 
     super file, result, status
   end

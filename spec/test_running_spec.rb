@@ -37,7 +37,7 @@ PHP
       context 'when it throws parse errors' do
         let(:content) { '$something =!==!")=#(" 123;' }
 
-        it { expect(results).to eq("PHP Parse error:  syntax error, unexpected '!==' (T_IS_NOT_IDENTICAL) in solution.php on line 5\n") }
+        it { expect(results).to eq("Parse error: syntax error, unexpected '!==' (T_IS_NOT_IDENTICAL) in solution.php on line 5") }
       end
     end
   end

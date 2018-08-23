@@ -2,8 +2,8 @@ FROM php:7.1-alpine
 MAINTAINER Rodrigo Alfonso
 
 # Install PHPUnit 7
-RUN wget -O phpunit https://phar.phpunit.de/phpunit-7.phar &&
-            chmod +x phpunit &&
+RUN wget -O phpunit https://phar.phpunit.de/phpunit-7.phar && \
+            chmod +x phpunit && \
             mv phpunit /usr/local/bin/phpunit
 
 # ---
@@ -25,6 +25,6 @@ RUN wget -O phpunit https://phar.phpunit.de/phpunit-7.phar &&
   # RUN chmod +x phpab
   # RUN mv phpab /usr/local/bin/phpab
 
-# GENERATE AUTOLOAD FOR MULTIPLE FILES
+# Generate autoload.php for multiple files
   # phpab --output src/autoload.php src
   # phpunit --bootstrap src/autoload.php tests/EmailTest
