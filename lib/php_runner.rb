@@ -2,7 +2,7 @@ require 'mumukit'
 
 Mumukit.runner_name = 'php'
 Mumukit.configure do |config|
-  config.docker_image = 'mumuki/mumuki-php-worker:1.1'
+  config.docker_image = 'mumuki/mumuki-php-worker:1.3'
 end
 
 require_relative './version'
