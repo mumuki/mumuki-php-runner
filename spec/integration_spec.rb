@@ -68,6 +68,25 @@ PHP
                            result: '')
   end
 
+  it 'answers a valid hash when submission is ok and passes all the expectations' do
+    response = bridge.run_tests!(test: test,
+                                 expectations: [
+                                   {
+                                     binding: '*',
+                                     inspection: 'DeclaresClass:Foo'
+                                   }
+                                 ],
+                                 extra: '',
+                                 content: ok_content)
+
+    expect(response).to eq(response_type: :structured,
+                           test_results: [{title: 'Foo bar baz', status: :passed, result: ''}],
+                           status: :passed,
+                           feedback: '',
+                           expectation_results: [{binding: '*', inspection: 'DeclaresClass:Foo', result: :passed}],
+                           result: '')
+  end
+
   it 'answers a valid hash when submission is not ok' do
     response = bridge.run_tests!(test: test,
                                  extra: '',
