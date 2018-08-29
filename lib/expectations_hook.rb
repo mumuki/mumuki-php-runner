@@ -1,9 +1,6 @@
 require 'mulang/php'
 
 class PhpExpectationsHook < Mumukit::Templates::MulangExpectationsHook
-  include Mumukit::Templates::WithIsolatedEnvironment
-  include Mumukit::WithTempfile
-
   SEPARATOR = '==> JSON dump:'
 
   include_smells true
@@ -12,14 +9,15 @@ class PhpExpectationsHook < Mumukit::Templates::MulangExpectationsHook
     'Mulang'
   end
 
-  def command_line(filename)
-    "php-parse --json-dump #{filename}"
+  def mulang_code(request)
+    result = request.result[:ast]
+
+    Mulang::Code.new(mulang_language, to_mulang_ast(result))
   end
 
-  def compile_content(source)
-    output, status = run_get_ast! "<?php\n#{source}"
 
-    if status != :passed || !output.include?(SEPARATOR)
+  def to_mulang_ast(output)
+    unless output.include? SEPARATOR
       raise Exception.new("Unable to get Mulang AST - Command failed with status: #{status}")
     end
 
@@ -32,7 +30,7 @@ class PhpExpectationsHook < Mumukit::Templates::MulangExpectationsHook
   end
 
   def default_smell_exceptions
-    LOGIC_SMELLS + FUNCTIONAL_SMELLS + %w(HasWrongCaseBindings)
+    LOGIC_SMELLS + FUNCTIONAL_SMELLS + OBJECT_ORIENTED_SMELLS
   end
 
   def domain_language
@@ -40,12 +38,5 @@ class PhpExpectationsHook < Mumukit::Templates::MulangExpectationsHook
       minimumIdentifierSize: 3,
       jargon: []
     }
-  end
-
-  private
-
-  def run_get_ast!(source)
-    file = write_tempfile! source
-    run_file! file
   end
 end

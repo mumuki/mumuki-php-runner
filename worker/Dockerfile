@@ -3,18 +3,21 @@ MAINTAINER Rodrigo Alfonso
 
 WORKDIR /opt/php
 
-# Install PHPUnit 7
-RUN wget -O phpunit https://phar.phpunit.de/phpunit-7.phar && \
-            chmod +x phpunit && \
-            mv phpunit /usr/local/bin/phpunit
+# Copy a script to run 'test' and 'ast' requests as batch
+COPY run-tests-and-get-ast.sh /usr/local/bin/run-tests-and-get-ast
 
-# Install Composer & PHP-Parser
+# Copy a script to install composer
 COPY install-composer.sh install-composer.sh
 
-RUN ./install-composer.sh && \
-    php composer.phar require nikic/php-parser && \
-    ln -s /opt/php/vendor/bin/php-parse /usr/local/bin/php-parse && \
-    rm install-composer.sh
+# Install PHPUnit 7, Composer, PHP-Parser, and bash
+RUN wget -O phpunit https://phar.phpunit.de/phpunit-7.phar && \
+            chmod +x phpunit && \
+            mv phpunit /usr/local/bin/phpunit && \
+            ./install-composer.sh && \
+            rm install-composer.sh && \
+            php composer.phar require nikic/php-parser && \
+            ln -s /opt/php/vendor/bin/php-parse /usr/local/bin/php-parse && \
+            apk add bash
 
 # ---
 
