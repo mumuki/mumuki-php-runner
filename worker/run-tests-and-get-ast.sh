@@ -28,7 +28,6 @@ echo "$ast_code" > $tmp_ast_code
 # ----------
 
 phpunit --testdox $tmp_test_code
-
 echo "/* ---Mumuki-Results-Separator--- */"
 php-parse --json-dump $tmp_ast_code
 

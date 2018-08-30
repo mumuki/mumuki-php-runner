@@ -15,14 +15,13 @@ class PhpExpectationsHook < Mumukit::Templates::MulangExpectationsHook
     Mulang::Code.new(mulang_language, to_mulang_ast(result))
   end
 
-
   def to_mulang_ast(output)
     unless output.include? SEPARATOR
-      raise Exception.new("Unable to get Mulang AST - Command failed with status: #{status}")
+      return ['Unable to get Mulang AST - Command failed!', :errored]
     end
 
     json = output.split(SEPARATOR).last
-    ast = JSON.parse(json, symbolize_names: true)
+    ast = JSON.parse json, symbolize_names: true
 
     Mulang::PHP.parse(ast)
   rescue => e
