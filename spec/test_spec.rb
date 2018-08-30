@@ -1,11 +1,12 @@
 require_relative './spec_helper'
 
 describe PhpTestHook do
+  let(:precompile_hook) { PhpPrecompileHook.new }
   let(:hook) { PhpTestHook.new }
 
   describe '#run!' do
-    let(:file) { hook.compile(treq(content, test, extra)) }
-    let(:raw_results) { hook.run!(file) }
+    let(:request) { precompile_hook.compile(treq(content, test, extra)) }
+    let(:raw_results) { hook.run!(request) }
     let(:results) { raw_results[0] }
 
     let(:extra) { '' }
@@ -42,5 +43,3 @@ PHP
     end
   end
 end
-
-

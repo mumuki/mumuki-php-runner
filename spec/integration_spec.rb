@@ -49,7 +49,7 @@ PHP
   end
 
   it 'answers a valid hash when query is ok' do
-    response = bridge.run_query!(extra: "$something = 2;",
+    response = bridge.run_query!(extra: '$something = 2;',
                                  content: 'function asd($a) { return $a . "asd"; }',
                                  query: 'asd($something * 3)')
     expect(response).to eq(status: :passed, result: "6asd")
@@ -95,7 +95,7 @@ RESULT
     response = bridge.run_tests!(test: test,
                                  extra: '',
                                  content: "#{broken_content}",
-                                 expectations: [])
+                                 expectations: [{ binding: '*', inspection: 'DeclaresClass:Foo' }])
 
     expect(response).to eq(response_type: :unstructured,
                            test_results: [],
@@ -169,5 +169,57 @@ CONTENT
                            feedback: '',
                            expectation_results: [],
                            result: '')
+  end
+
+  context 'with expectations' do
+    it 'answers a valid hash when it passes all the expectations' do
+      response = bridge.run_tests!(test: test,
+                                   expectations: [{ binding: '*', inspection: 'DeclaresClass:Foo' }],
+                                   extra: '',
+                                   content: ok_content)
+
+      expect(response).to eq(response_type: :structured,
+                             test_results: [{title: 'Foo bar baz', status: :passed, result: ''}],
+                             status: :passed,
+                             feedback: '',
+                             expectation_results: [{binding: '*', inspection: 'DeclaresClass:Foo', result: :passed}],
+                             result: '')
+    end
+
+    it 'answers a valid hash when there are failing expectations' do
+      response = bridge.run_tests!(test: test,
+                                   expectations: [{ binding: '*', inspection: 'Not:DeclaresClass:Foo' }],
+                                   extra: '',
+                                   content: ok_content)
+
+      expect(response).to eq(response_type: :structured,
+                             test_results: [{title: 'Foo bar baz', status: :passed, result: ''}],
+                             status: :passed_with_warnings,
+                             feedback: '',
+                             expectation_results: [{binding: '*', inspection: 'Not:DeclaresClass:Foo', result: :failed}],
+                             result: '')
+    end
+
+    it 'answers a valid hash when there are mixed passing and failing expectations' do
+      response = bridge.run_tests!(test: test,
+                                   expectations: [
+                                     { binding: '*', inspection: 'DeclaresClass:Foo' },
+                                     { binding: 'Foo', inspection: 'DeclaresMethod:bar' },
+                                     { binding: 'Foo', inspection: 'DeclaresMethod:ASFJASFJASF' },
+                                   ],
+                                   extra: '',
+                                   content: ok_content)
+
+      expect(response).to eq(response_type: :structured,
+                             test_results: [{title: 'Foo bar baz', status: :passed, result: ''}],
+                             status: :passed_with_warnings,
+                             feedback: '',
+                             expectation_results: [
+                               { binding: '*', inspection: 'DeclaresClass:Foo', result: :passed },
+                               { binding: 'Foo', inspection: 'DeclaresMethod:bar', result: :passed },
+                               { binding: 'Foo', inspection: 'DeclaresMethod:ASFJASFJASF', result: :failed },
+                             ],
+                             result: '')
+    end
   end
 end

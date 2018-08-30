@@ -13,12 +13,12 @@ describe PhpQueryHook do
 
   describe 'should pass on ok request' do
     let(:request) { qreq(okCode, okQuery) }
-      it { expect(result).to eq ["bar", :passed] }
+      it { expect(result).to eq ['bar', :passed] }
   end
 
   describe 'should have result on ok request with query dependent on extra' do
     let(:request) { qreq(okCodeOnExtra, okQuery, extraCode) }
-    it { expect(result).to eq ["bar22", :passed] }
+    it { expect(result).to eq ['bar22', :passed] }
   end
 end
 

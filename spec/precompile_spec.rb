@@ -1,8 +1,8 @@
 require_relative './spec_helper'
 
-describe PhpTestHook do
-  let(:hook) { PhpTestHook.new(nil) }
-  let(:compilation) { hook.compile_file_content(treq(sample_content, sample_test, sample_extra)) }
+describe PhpPrecompileHook do
+  let(:hook) { PhpPrecompileHook.new(nil) }
+  let(:compilation) { hook.compile_test_content(treq(sample_content, sample_test, sample_extra)) }
 
   let(:sample_extra) { '$extra = 2;' }
   let(:sample_content) { 'class Foo { function bar() { return "baz"; } }' }
