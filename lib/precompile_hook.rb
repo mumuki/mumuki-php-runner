@@ -23,15 +23,13 @@ class PhpPrecompileHook < PhpFileHook
     { test: parts.first, ast: parts.last }
   end
 
-  private
-
   def compile_test_content(request)
     <<-EOF
 <?php
 declare(strict_types=1);
 
 #{request.extra}
-    #{request.content}
+#{request.content}
 
 use PHPUnit\\Framework\\TestCase;
 
