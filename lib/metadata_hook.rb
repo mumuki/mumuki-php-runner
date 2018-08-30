@@ -4,7 +4,7 @@ class PhpMetadataHook < Mumukit::Hook
       language: {
         name: 'php',
         icon: {type: 'devicon', name: 'php'},
-        version: 'v1.0.0',
+        version: 'v1.1.0',
         extension: 'php',
         ace_mode: 'php'
       },
