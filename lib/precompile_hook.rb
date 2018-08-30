@@ -10,7 +10,6 @@ class PhpPrecompileHook < PhpFileHook
     return request unless request[:query].nil?
 
     file = super request
-
     struct request.to_h.merge result: run!(file)
   end
 

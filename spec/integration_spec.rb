@@ -49,7 +49,7 @@ PHP
   end
 
   it 'answers a valid hash when query is ok' do
-    response = bridge.run_query!(extra: "$something = 2;",
+    response = bridge.run_query!(extra: '$something = 2;',
                                  content: 'function asd($a) { return $a . "asd"; }',
                                  query: 'asd($something * 3)')
     expect(response).to eq(status: :passed, result: "6asd")

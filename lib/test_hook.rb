@@ -6,7 +6,9 @@ class PhpTestHook < Mumukit::Defaults::TestHook
   def run!(request)
     result = request.result[:test]
 
-    return [result.strip, :errored] unless result.include? TEST_NAME
+    unless result.include? TEST_NAME
+      return [mask_tempfile_references(result.strip), :errored]
+    end
 
     [to_structured_result(result)]
   end
@@ -29,5 +31,9 @@ class PhpTestHook < Mumukit::Defaults::TestHook
     reason = reason_lines.take(reason_lines.count - 2).join "\n"
 
     [regexp_groups.first, 'failed', reason]
+  end
+
+  def mask_tempfile_references(string)
+    string.gsub /\/tmp\/tmp\.\w+/, 'solution.php'
   end
 end
