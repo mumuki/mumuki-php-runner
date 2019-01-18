@@ -221,5 +221,63 @@ CONTENT
                              ],
                              result: '')
     end
+
+    context 'with multiple files' do
+      let (:response) { bridge.run_tests!(test: (<<TEST
+protected function setUp() {
+  require('foo.php');
+  require('foobar.php');
+}
+
+public function testFooBarBaz(): void {
+  $this->assertEquals("baz", (new Foo())->bar());
+  $this->assertEquals("zbaz", (new FooBar())->barba());
+}
+TEST
+      ),
+                                   extra: nil,
+                                   content: content,
+                                   expectations: [
+                                     { binding: 'Foo', inspection: 'DeclaresMethod:bar' },
+                                     { binding: 'FooBar', inspection: 'Uses:Foo' },
+                                     { binding: 'FooBar', inspection: 'DeclaresMethod:barba' },
+                                     { binding: 'FooBar', inspection: 'DeclaresMethod:barbarroja' }
+                                   ]
+      )}
+
+      context 'with passing tests and failed expectations' do
+        let (:content) { (<<CONTENT
+/*<foo.php#*/
+class Foo {
+  public function bar() {
+    return "baz";
+  }
+} 
+/*#foo.php>*/
+/*<foobar.php#*/
+class FooBar {
+  public function barba() {
+    return "z" . (new Foo())->bar();
+  }
+} 
+/*#foobar.php>*/
+CONTENT
+        )}
+
+        it { expect(response).to eq(response_type: :structured,
+                                 test_results: [
+                                   {title: 'Foo bar baz', status: :passed, result: ''}
+                                 ],
+                                 status: :passed_with_warnings,
+                                 feedback: '',
+                                 expectation_results: [
+                                   { binding: 'Foo', inspection: 'DeclaresMethod:bar', result: :passed },
+                                   { binding: 'FooBar', inspection: 'Uses:Foo', result: :passed },
+                                   { binding: 'FooBar', inspection: 'DeclaresMethod:barba', result: :passed },
+                                   { binding: 'FooBar', inspection: 'DeclaresMethod:barbarroja', result: :failed }
+                                 ],
+                                 result: '') }
+      end
+    end
   end
 end
