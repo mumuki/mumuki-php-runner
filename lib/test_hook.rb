@@ -1,5 +1,5 @@
 class PhpTestHook < Mumukit::Defaults::TestHook
-  TEST_NAME = 'AAAMumukiTestCaseAAA'
+  TEST_NAME = 'MumukiSubmissionTest'
   PASSED_REGEXP = /[✔☢] ([^\n]+)/
   FAILED_REGEXP = /✘ ([^\n]+)\n *\│\n *│ ([^イ]+│ \n   )/
 

@@ -17,7 +17,10 @@ RUN wget -O phpunit https://phar.phpunit.de/phpunit-7.phar && \
             rm install-composer.sh && \
             php composer.phar require nikic/php-parser && \
             ln -s /opt/php/vendor/bin/php-parse /usr/local/bin/php-parse && \
-            apk add bash
+            apk add bash && \
+            wget -O phpab https://github.com/theseer/Autoload/releases/download/1.25.0/phpab-1.25.0.phar && \
+            chmod +x phpab && \
+            mv phpab /usr/local/bin/phpab
 
 # ---
 

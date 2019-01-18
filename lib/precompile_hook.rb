@@ -9,18 +9,18 @@ class PhpPrecompileHook < PhpFileHook
   def compile(request)
     return request unless request[:query].nil?
 
-    file = super request
-    struct request.to_h.merge result: run!(file)
+    files = super request
+    struct request.to_h.merge result: run!(files)
   end
 
   def compile_file_content(request)
     test_content = compile_test_content request
-    ast_content = add_php_tag request[:content]
 
     if has_files?(request)
-      add_php_tags(test_content).merge('submission_ast.json' => ast_content)
+      ast_content = request.content.values.join("\n")
+      add_php_tags(test_content).merge('submission_ast.json' => add_php_tag(ast_content))
     else
-      test_content + BATCH_SEPARATOR + ast_content
+      add_php_tag(test_content) + BATCH_SEPARATOR + add_php_tag(request.content)
     end
   end
 
@@ -34,7 +34,6 @@ class PhpPrecompileHook < PhpFileHook
 
   def compile_test_content(request)
     test = <<-EOF
-<?php
 declare(strict_types=1);
 
 #{request.extra}
@@ -48,7 +47,7 @@ final class #{PhpTestHook::TEST_NAME}Test extends TestCase {
     EOF
 
     has_files?(request) ?
-      files_of(request).merge('submission_test.php' => test) :
+      files_of(request).merge("#{PhpTestHook::TEST_NAME.downcase}.php" => test) :
       test
   end
 
