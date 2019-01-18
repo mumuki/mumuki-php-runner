@@ -30,8 +30,6 @@ class PhpPrecompileHook < PhpFileHook
     { test: parts.first, ast: parts.last }
   end
 
-  private
-
   def compile_test_content(request)
     test = <<-EOF
 declare(strict_types=1);
