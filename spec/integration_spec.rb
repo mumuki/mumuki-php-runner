@@ -278,6 +278,48 @@ CONTENT
                                  ],
                                  result: '') }
       end
+
+      context 'with failing tests' do
+        let (:content) { (<<CONTENT
+/*<foo.php#*/
+class Foo {
+  public function bar() {
+    return "baz";
+  }
+} 
+/*#foo.php>*/
+/*<foobar.php#*/
+class FooBar {
+  public function barba() {
+    return "nonono" . (new Foo())->bar();
+  }
+} 
+/*#foobar.php>*/
+CONTENT
+        )}
+
+        it { expect(response).to eq(response_type: :structured,
+                                    test_results: [
+                                      {title: 'Foo bar baz', status: :failed, result: (<<RESULT
+Failed asserting that two strings are equal.
+   │ --- Expected
+   │ +++ Actual
+   │ @@ @@
+   │ -'zbaz'
+   │ +'nononobaz'
+RESULT
+).chop}
+                                    ],
+                                    status: :failed,
+                                    feedback: '',
+                                    expectation_results: [
+                                      { binding: 'Foo', inspection: 'DeclaresMethod:bar', result: :passed },
+                                      { binding: 'FooBar', inspection: 'Uses:Foo', result: :passed },
+                                      { binding: 'FooBar', inspection: 'DeclaresMethod:barba', result: :passed },
+                                      { binding: 'FooBar', inspection: 'DeclaresMethod:barbarroja', result: :failed }
+                                    ],
+                                    result: '') }
+      end
     end
   end
 end
