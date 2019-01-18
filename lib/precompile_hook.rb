@@ -2,8 +2,8 @@ class PhpPrecompileHook < PhpFileHook
   BATCH_SEPARATOR = "\n/* ---Mumuki-Batch-Separator--- */\n"
   RESULTS_SEPARATOR = "\n/* ---Mumuki-Results-Separator--- */\n"
 
-  def command_line(filename)
-    "run-tests-and-get-ast #{filename}"
+  def command_line(*filenames)
+    "run-tests-and-get-ast #{filenames.join(' ')}"
   end
 
   def compile(request)
@@ -24,12 +24,12 @@ class PhpPrecompileHook < PhpFileHook
   end
 
   def compile_test_content(request)
-    <<-EOF
+    test = <<-EOF
 <?php
 declare(strict_types=1);
 
 #{request.extra}
-#{request.content}
+#{has_files?(request) ? '' : request.content}
 
 use PHPUnit\\Framework\\TestCase;
 
@@ -37,6 +37,10 @@ final class #{PhpTestHook::TEST_NAME}Test extends TestCase {
 #{request.test.lines.map {|it| '  ' + it}.join}
 }
     EOF
+
+    has_files?(request) ?
+      files_of(request).merge('submission_test.php' => test) :
+      test
   end
 
   def compile_ast_content(request)

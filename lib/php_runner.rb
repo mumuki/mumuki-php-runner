@@ -2,7 +2,7 @@ require 'mumukit'
 
 Mumukit.runner_name = 'php'
 Mumukit.configure do |config|
-  config.docker_image = 'mumuki/mumuki-php-worker:1.4'
+  config.docker_image = 'mumuki/mumuki-php-worker:1.4' # TODO: 1.5
   config.multifile = true
 end
 
