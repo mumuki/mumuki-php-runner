@@ -15,10 +15,10 @@ class PhpPrecompileHook < PhpFileHook
 
   def compile_file_content(request)
     test_content = compile_test_content request
-    ast_content = compile_ast_content request
+    ast_content = add_php_tag request[:content]
 
     if has_files?(request)
-      test_content.merge('submission_ast.json' => ast_content)
+      add_php_tags(test_content).merge('submission_ast.json' => ast_content)
     else
       test_content + BATCH_SEPARATOR + ast_content
     end
@@ -29,6 +29,8 @@ class PhpPrecompileHook < PhpFileHook
 
     { test: parts.first, ast: parts.last }
   end
+
+  private
 
   def compile_test_content(request)
     test = <<-EOF
@@ -50,7 +52,11 @@ final class #{PhpTestHook::TEST_NAME}Test extends TestCase {
       test
   end
 
-  def compile_ast_content(request)
-    "<?php\n#{request[:content]}"
+  def add_php_tags(files)
+    Hash[files.map{|name, content| [name, add_php_tag(content)] } ]
+  end
+
+  def add_php_tag(content)
+    "<?php\n#{content}"
   end
 end
