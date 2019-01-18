@@ -14,7 +14,14 @@ class PhpPrecompileHook < PhpFileHook
   end
 
   def compile_file_content(request)
-    compile_test_content(request) + BATCH_SEPARATOR + compile_ast_content(request)
+    test_content = compile_test_content request
+    ast_content = compile_ast_content request
+
+    if has_files?(request)
+      test_content.merge('submission_ast.json' => ast_content)
+    else
+      test_content + BATCH_SEPARATOR + ast_content
+    end
   end
 
   def post_process_file(_file, result, status)
