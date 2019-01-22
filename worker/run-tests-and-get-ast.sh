@@ -1,35 +1,58 @@
 #!/bin/bash
 
-tmp_test_code=$(mktemp)
-tmp_ast_code=$(mktemp)
+function print_separator() {
+  echo "/* ---Mumuki-Results-Separator--- */"
+}
 
-batch=$(cat $1)
-delimiter="/* ---Mumuki-Batch-Separator--- */"
+files_count="$#"
+if [ "$files_count" -gt "1" ]; then
+  # -----------
+  # MULTI FILE
+  # -----------
 
-# ---
-a=()
-i=0
-while read -r line
-do
-  a[i]="${a[i]}${line}"$'\n'
-  if [ "$line" == "$delimiter" ]
-  then
-    let ++i
-  fi
-done <<< "$batch"
-# ---
+  dir_name=$(dirname "$1")
+  cd "$dir_name"
 
-test_code=$(echo "${a[0]}" | head -n -2)
-ast_code="${a[1]}"
+  phpab --output autoload.php .
+  phpunit --bootstrap autoload.php --testdox mumukisubmissiontest
+  print_separator
+  php-parse --json-dump submission_ast.json
+else
+  # -----------
+  # SINGLE FILE
+  # -----------
 
-echo "$test_code" > $tmp_test_code
-echo "$ast_code" > $tmp_ast_code
+  tmp_test_code=$(mktemp)
+  tmp_ast_code=$(mktemp)
 
-# ----------
+  batch=$(cat $1)
+  delimiter="/* ---Mumuki-Batch-Separator--- */"
 
-phpunit --testdox $tmp_test_code
-echo "/* ---Mumuki-Results-Separator--- */"
-php-parse --json-dump $tmp_ast_code
+  # ---
+  a=()
+  i=0
+  while read -r line
+  do
+    a[i]="${a[i]}${line}"$'\n'
+    if [ "$line" == "$delimiter" ]
+    then
+      let ++i
+    fi
+  done <<< "$batch"
+  # ---
 
-rm $tmp_test_code
-rm $tmp_ast_code
+  test_code=$(echo "${a[0]}" | head -n -2)
+  ast_code="${a[1]}"
+
+  echo "$test_code" > $tmp_test_code
+  echo "$ast_code" > $tmp_ast_code
+
+  # ----------
+
+  phpunit --testdox $tmp_test_code
+  print_separator
+  php-parse --json-dump $tmp_ast_code
+
+  rm $tmp_test_code
+  rm $tmp_ast_code
+fi

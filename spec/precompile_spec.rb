@@ -15,7 +15,6 @@ PHP
   }
   let(:expected_compilation) do
     <<PHP
-<?php
 declare(strict_types=1);
 
 $extra = 2;
@@ -23,7 +22,7 @@ class Foo { function bar() { return "baz"; } }
 
 use PHPUnit\\Framework\\TestCase;
 
-final class AAAMumukiTestCaseAAATest extends TestCase {
+final class MumukiSubmissionTestTest extends TestCase {
   public function testFooBarBaz(): void {
     $this->assertEquals("baz", (new Foo())->bar());
   }
