@@ -15,6 +15,10 @@ class PhpExpectationsHook < Mumukit::Templates::MulangExpectationsHook
     Mulang::Code.new(mulang_language, to_mulang_ast(result))
   end
 
+  def original_language
+    'Php'
+  end
+
   def to_mulang_ast(output)
     unless output.include? SEPARATOR
       return ['Unable to get Mulang AST - Command failed!', :errored]
